@@ -21,6 +21,13 @@ export default function TicketDetail() {
 
     useEffect(() => {
         fetchTicket();
+
+        // Poll for updates every 10 seconds
+        const pollInterval = setInterval(() => {
+            fetchTicket();
+        }, 3000);
+
+        return () => clearInterval(pollInterval);
     }, [id]);
 
     useEffect(() => {

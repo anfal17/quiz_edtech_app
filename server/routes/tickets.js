@@ -12,9 +12,17 @@ router.get('/', protect, async (req, res) => {
     try {
         const { status, category, priority, page = 1, limit = 20 } = req.query;
 
-        const filter = {};
+        const query = {};
 
         // Non-admins only see their own tickets
+        if (req.user.role === ROLES.USER) {
+            query.createdBy = req.user._id;
+        }
+
+        if (status) query.status = status;
+        if (category) query.category = category;
+        if (priority) query.priority = priority;
+
         const tickets = await Ticket.find(query)
             .populate('createdBy', 'name avatar email')
             .populate('assignedTo', 'name avatar')

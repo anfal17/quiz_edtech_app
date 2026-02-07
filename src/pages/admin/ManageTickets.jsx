@@ -18,10 +18,29 @@ export default function ManageTickets() {
     const [selectedTicket, setSelectedTicket] = useState(null);
     const [message, setMessage] = useState('');
     const [sending, setSending] = useState(false);
+    const [resolutionModalOpen, setResolutionModalOpen] = useState(false);
+    const [resolutionNote, setResolutionNote] = useState('');
+    const [pendingStatus, setPendingStatus] = useState(null);
 
     useEffect(() => {
         fetchData();
     }, [filter]);
+
+    // Poll for updates when a ticket is selected
+    useEffect(() => {
+        if (!selectedTicket) return;
+
+        const pollInterval = setInterval(async () => {
+            try {
+                const updated = await ticketsAPI.getById(selectedTicket._id);
+                setSelectedTicket(updated);
+            } catch (error) {
+                console.error('Failed to poll ticket:', error);
+            }
+        }, 10000);
+
+        return () => clearInterval(pollInterval);
+    }, [selectedTicket?._id]);
 
     const fetchData = async () => {
         try {
@@ -66,10 +85,32 @@ export default function ManageTickets() {
 
     const handleUpdateStatus = async (status) => {
         if (!selectedTicket) return;
+
+        if (status === TICKET_STATUS.RESOLVED || status === TICKET_STATUS.CLOSED) {
+            setPendingStatus(status);
+            setResolutionModalOpen(true);
+            return;
+        }
+
         try {
             await ticketsAPI.updateStatus(selectedTicket._id, status);
             setSelectedTicket({ ...selectedTicket, status });
             fetchData();
+        } catch (error) {
+            console.error('Failed to update status:', error);
+        }
+    };
+
+    const confirmResolution = async () => {
+        if (!selectedTicket || !pendingStatus) return;
+
+        try {
+            await ticketsAPI.updateStatus(selectedTicket._id, pendingStatus, resolutionNote);
+            setSelectedTicket({ ...selectedTicket, status: pendingStatus, resolution: resolutionNote });
+            fetchData();
+            setResolutionModalOpen(false);
+            setResolutionNote('');
+            setPendingStatus(null);
         } catch (error) {
             console.error('Failed to update status:', error);
         }
@@ -294,6 +335,46 @@ export default function ManageTickets() {
                     )}
                 </Card>
             </div>
+
+            {/* Resolution Modal */}
+            {resolutionModalOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
+                    <Card className="w-full max-w-md">
+                        <div className="p-4 border-b border-[var(--border)]">
+                            <h3 className="text-lg font-semibold text-[var(--text)]">Resolve Ticket</h3>
+                        </div>
+                        <div className="p-4 space-y-4">
+                            <p className="text-sm text-[var(--text-secondary)]">
+                                Please provide a resolution note for the user. This will be visible on their ticket.
+                            </p>
+                            <textarea
+                                value={resolutionNote}
+                                onChange={(e) => setResolutionNote(e.target.value)}
+                                placeholder="Resolution details..."
+                                className="w-full px-4 py-3 rounded-xl bg-[var(--surface-hover)] border border-[var(--border)] text-[var(--text)] focus:outline-none focus:ring-2 focus:ring-primary-500 min-h-[100px]"
+                            />
+                            <div className="flex gap-3 justify-end">
+                                <Button
+                                    variant="ghost"
+                                    onClick={() => {
+                                        setResolutionModalOpen(false);
+                                        setPendingStatus(null);
+                                    }}
+                                >
+                                    Cancel
+                                </Button>
+                                <Button
+                                    variant="primary"
+                                    onClick={confirmResolution}
+                                    disabled={!resolutionNote.trim()}
+                                >
+                                    Confirm Resolution
+                                </Button>
+                            </div>
+                        </div>
+                    </Card>
+                </div>
+            )}
         </div>
     );
 }
