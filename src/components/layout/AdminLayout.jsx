@@ -3,7 +3,7 @@ import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import {
     LayoutDashboard, BookOpen, FileText, HelpCircle,
     Users, Settings, Menu, X, ChevronLeft,
-    Moon, Sun, LogOut, MessageSquare
+    Moon, Sun, LogOut, MessageSquare, MessageCircle
 } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 
@@ -13,7 +13,8 @@ const navItems = [
     { path: '/admin/chapters', label: 'Chapters', icon: FileText },
     { path: '/admin/quizzes', label: 'Quizzes', icon: HelpCircle },
     { path: '/admin/users', label: 'Users', icon: Users },
-    { path: '/admin/tickets', label: 'Support Tickets', icon: MessageSquare }, // Added Support Tickets
+    { path: '/admin/tickets', label: 'Support Tickets', icon: MessageSquare },
+    { path: '/admin/feedback', label: 'Feedback', icon: MessageCircle },
 ];
 
 export default function AdminLayout() {

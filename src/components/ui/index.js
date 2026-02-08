@@ -9,3 +9,4 @@ export { toast };
 export const ToastContainer = () => null; // Deprecated, using Toaster in App
 export { Tabs, TabsList, TabsTrigger, TabsContent } from './Tabs';
 export { Skeleton, SkeletonCard, SkeletonDomainCard, SkeletonQuizQuestion } from './Skeleton';
+export { default as FeedbackModal } from './FeedbackModal';

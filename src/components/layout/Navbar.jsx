@@ -4,7 +4,7 @@ import { Button } from '../ui';
 import {
     Menu, X, Search, Sun, Moon, Flame, Zap,
     BookOpen, Home, LayoutDashboard, Info, User, LogOut, Settings, Shield,
-    Compass, PlusCircle, LayoutGrid, LifeBuoy
+    Compass, PlusCircle, LayoutGrid, LifeBuoy, MessageSquare
 } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
@@ -186,6 +186,16 @@ export default function Navbar() {
                                                 >
                                                     <LifeBuoy size={18} />
                                                     Support
+                                                </button>
+                                                <button
+                                                    onClick={() => {
+                                                        setIsProfileOpen(false);
+                                                        navigate('/my-feedback');
+                                                    }}
+                                                    className="w-full flex items-center gap-3 px-4 py-2 text-[var(--text-secondary)] hover:bg-[var(--surface-hover)] hover:text-[var(--text)] text-left"
+                                                >
+                                                    <MessageSquare size={18} />
+                                                    My Feedback
                                                 </button>
                                                 {(user?.role === ROLES.ADMIN || user?.role === ROLES.SUPERADMIN) && (
                                                     <button

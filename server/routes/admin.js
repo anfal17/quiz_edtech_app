@@ -100,6 +100,52 @@ router.get('/users/:id', protect, admin, async (req, res) => {
     }
 });
 
+// @route   POST /api/admin/users
+// @desc    Create new user (with password)
+// @access  Private/Superadmin
+router.post('/users', protect, superadmin, async (req, res) => {
+    try {
+        const { name, email, password, role = 'user' } = req.body;
+
+        // Validate required fields
+        if (!name || !email || !password) {
+            return res.status(400).json({ message: 'Name, email, and password are required' });
+        }
+
+        // Check if user already exists
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
+            return res.status(400).json({ message: 'User with this email already exists' });
+        }
+
+        // Validate password length
+        if (password.length < 6) {
+            return res.status(400).json({ message: 'Password must be at least 6 characters' });
+        }
+
+        // Create new user
+        const user = await User.create({
+            name,
+            email,
+            password, // Will be hashed by pre-save hook in User model
+            role,
+            isActive: true
+        });
+
+        res.status(201).json({
+            _id: user._id,
+            name: user.name,
+            email: user.email,
+            role: user.role,
+            isActive: user.isActive,
+            message: 'User created successfully'
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
 // @route   PUT /api/admin/users/:id
 // @desc    Update user (admin can update role, status)
 // @access  Private/Admin

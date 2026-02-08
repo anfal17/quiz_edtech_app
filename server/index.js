@@ -24,6 +24,7 @@ app.use('/api/progress', require('./routes/progress'));
 app.use('/api/admin', require('./routes/admin'));
 app.use('/api/requests', require('./routes/requests'));
 app.use('/api/tickets', require('./routes/tickets'));
+app.use('/api/feedback', require('./routes/feedback'));
 
 // Health check
 app.get('/api/health', (req, res) => {

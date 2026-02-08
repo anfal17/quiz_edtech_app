@@ -96,7 +96,7 @@ export default function CoursePlayerLayout() {
                     {/* Left: Back & Title */}
                     <div className="flex items-center gap-4 min-w-0 flex-1">
                         <Link to={`/domain/${domainId}`}>
-                            <Button variant="ghost" size="sm" iconOnly>
+                            <Button variant="ghost" size="sm">
                                 <ArrowLeft size={20} />
                             </Button>
                         </Link>
@@ -122,7 +122,7 @@ export default function CoursePlayerLayout() {
 
                         {/* Mobile Menu Toggle */}
                         <div className="lg:hidden">
-                            <Button variant="ghost" size="sm" iconOnly onClick={() => setMenuOpen(true)}>
+                            <Button variant="ghost" size="sm" onClick={() => setMenuOpen(true)}>
                                 <Menu size={20} />
                             </Button>
                         </div>
@@ -202,7 +202,7 @@ export default function CoursePlayerLayout() {
                         <div className="relative w-80 h-full bg-[var(--surface)] border-l border-[var(--border)] shadow-2xl animate-slide-in-right flex flex-col">
                             <div className="p-4 border-b border-[var(--border)] flex items-center justify-between">
                                 <h2 className="font-bold text-lg">Course Content</h2>
-                                <Button variant="ghost" size="sm" iconOnly onClick={() => setMenuOpen(false)}>
+                                <Button variant="ghost" size="sm" onClick={() => setMenuOpen(false)}>
                                     <X size={20} />
                                 </Button>
                             </div>

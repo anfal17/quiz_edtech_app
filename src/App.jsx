@@ -20,6 +20,7 @@ import Profile from './pages/Profile';
 import Settings from './pages/Settings';
 import Support from './pages/Support';
 import TicketDetail from './pages/TicketDetail';
+import MyFeedback from './pages/MyFeedback';
 import NotFound from './pages/NotFound';
 
 // Auth Pages
@@ -33,6 +34,8 @@ import ManageChapters from './pages/admin/ManageChapters';
 import ManageQuizzes from './pages/admin/ManageQuizzes';
 import ManageUsers from './pages/admin/ManageUsers';
 import ManageTickets from './pages/admin/ManageTickets';
+import CreateUser from './pages/admin/CreateUser';
+import ManageFeedback from './pages/admin/ManageFeedback';
 import CourseEditor from './components/admin/CourseEditor';
 
 function App() {
@@ -60,6 +63,9 @@ function App() {
               } />
               <Route path="/support/:id" element={
                 <ProtectedRoute><TicketDetail /></ProtectedRoute>
+              } />
+              <Route path="/my-feedback" element={
+                <ProtectedRoute><MyFeedback /></ProtectedRoute>
               } />
             </Route>
 
@@ -95,7 +101,9 @@ function App() {
               <Route path="chapters" element={<ManageChapters />} />
               <Route path="quizzes" element={<ManageQuizzes />} />
               <Route path="users" element={<ManageUsers />} />
+              <Route path="users/create" element={<CreateUser />} />
               <Route path="tickets" element={<ManageTickets />} />
+              <Route path="feedback" element={<ManageFeedback />} />
             </Route>
 
             {/* 404 Page */}

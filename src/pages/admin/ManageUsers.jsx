@@ -1,13 +1,15 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
     Search, Users, Mail, Calendar, Shield,
-    MoreVertical, Eye, Ban, CheckCircle
+    MoreVertical, Eye, Ban, CheckCircle, UserPlus
 } from 'lucide-react';
 import { Button, Card, Badge, Modal } from '../../components/ui';
 import { adminAPI } from '../../services/api';
 import toast from 'react-hot-toast';
 
 export default function ManageUsers() {
+    const navigate = useNavigate();
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [stats, setStats] = useState({
@@ -100,9 +102,18 @@ export default function ManageUsers() {
     return (
         <div className="space-y-6">
             {/* Header */}
-            <div>
-                <h1 className="text-2xl font-bold text-[var(--text)]">Manage Users</h1>
-                <p className="text-[var(--text-secondary)]">View and manage user accounts.</p>
+            <div className="flex items-center justify-between">
+                <div>
+                    <h1 className="text-2xl font-bold text-[var(--text)]">Manage Users</h1>
+                    <p className="text-[var(--text-secondary)]">View and manage user accounts.</p>
+                </div>
+                <Button
+                    variant="primary"
+                    leftIcon={<UserPlus size={20} />}
+                    onClick={() => navigate('/admin/users/create')}
+                >
+                    Create User
+                </Button>
             </div>
 
             {/* Stats */}

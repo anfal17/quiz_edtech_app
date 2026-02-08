@@ -197,6 +197,12 @@ export const adminAPI = {
 
   deleteUser: (id) =>
     apiClient(`/admin/users/${id}`, { method: 'DELETE' }),
+
+  createUser: (data) =>
+    apiClient('/admin/users', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
 };
 
 // Content Requests API
@@ -273,6 +279,31 @@ export const ticketsAPI = {
     apiClient(`/tickets/${id}`, { method: 'DELETE' }),
 
   getStats: () => apiClient('/tickets/stats'),
+};
+
+// Feedback API
+export const feedbackAPI = {
+  getAll: (params = {}) => {
+    const query = new URLSearchParams(params).toString();
+    return apiClient(`/feedback${query ? `?${query}` : ''}`);
+  },
+
+  getAllAdmin: (params = {}) => {
+    const query = new URLSearchParams(params).toString();
+    return apiClient(`/feedback/admin${query ? `?${query}` : ''}`);
+  },
+
+  create: (data) =>
+    apiClient('/feedback', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+
+  resolve: (id, data) =>
+    apiClient(`/feedback/${id}/resolve`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    }),
 };
 
 export default apiClient;

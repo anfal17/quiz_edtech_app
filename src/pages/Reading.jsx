@@ -2,9 +2,9 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import {
     ArrowLeft, ArrowRight, Clock, BookOpen, Brain,
-    CheckCircle, List, ChevronUp
+    CheckCircle, List, ChevronUp, Flag
 } from 'lucide-react';
-import { Button, Card, ProgressBar, Badge, toast } from '../components/ui';
+import { Button, Card, ProgressBar, Badge, toast, FeedbackModal } from '../components/ui';
 import { useAuth } from '../context/AuthContext';
 import { coursesAPI, chaptersAPI, progressAPI } from '../services/api';
 
@@ -22,6 +22,7 @@ export default function Reading() {
     const [toc, setToc] = useState([]);
     const [isCompleted, setIsCompleted] = useState(false);
     const [loading, setLoading] = useState(true);
+    const [feedbackOpen, setFeedbackOpen] = useState(false);
 
     const contentRef = useRef(null);
     const lastScrollPosition = useRef(0);
@@ -359,6 +360,28 @@ export default function Reading() {
                 >
                     <ChevronUp size={24} />
                 </button>
+            )}
+
+            {/* Report Issue Floating Button */}
+            <button
+                onClick={() => setFeedbackOpen(true)}
+                className="fixed bottom-6 left-6 px-4 py-2 rounded-full bg-[var(--surface)] border border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text)] hover:border-primary-500 shadow-lg transition-all z-40 flex items-center gap-2"
+            >
+                <Flag size={16} />
+                <span className="hidden sm:inline">Report Issue</span>
+            </button>
+
+            {/* Feedback Modal */}
+            {chapter && (
+                <FeedbackModal
+                    isOpen={feedbackOpen}
+                    onClose={() => setFeedbackOpen(false)}
+                    feedbackType="chapter"
+                    contentId={chapter._id}
+                    contentTitle={chapter.title}
+                    courseId={domain?._id}
+                    chapterId={chapter._id}
+                />
             )}
         </div>
     );

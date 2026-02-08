@@ -3,9 +3,9 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import {
     ArrowLeft, ArrowRight, CheckCircle, XCircle,
     RotateCcw, Trophy, Zap, Target, Clock,
-    ChevronRight, BookOpen, AlertCircle
+    ChevronRight, BookOpen, AlertCircle, Flag
 } from 'lucide-react';
-import { Button, Card, ProgressBar, toast } from '../components/ui';
+import { Button, Card, ProgressBar, toast, FeedbackModal } from '../components/ui';
 import { useAuth } from '../context/AuthContext';
 import { quizzesAPI, coursesAPI, chaptersAPI } from '../services/api';
 
@@ -35,6 +35,8 @@ export default function Quiz() {
     const [submissionResult, setSubmissionResult] = useState(null);
     const [loading, setLoading] = useState(true);
     const [submitting, setSubmitting] = useState(false);
+    const [feedbackOpen, setFeedbackOpen] = useState(false);
+    const [feedbackQuestionIndex, setFeedbackQuestionIndex] = useState(null);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -205,7 +207,7 @@ export default function Quiz() {
                     refreshUser(); // Sync XP immediately
                 }
             } else {
-                toast.info(`Quiz finished. Score: ${result.score}%`);
+                toast(`Quiz finished. Score: ${result.score}%`);
             }
 
         } catch (error) {
@@ -299,6 +301,24 @@ export default function Quiz() {
                         currentIndex={currentQuestionIndex}
                         onIndexChange={setCurrentQuestionIndex}
                         onExit={() => setQuizState(QUIZ_STATE.RESULTS)}
+                        setFeedbackOpen={setFeedbackOpen}
+                        setFeedbackQuestionIndex={setFeedbackQuestionIndex}
+                    />
+                )}
+
+                {/* Feedback Modal */}
+                {quiz && feedbackQuestionIndex !== null && quiz.questions[feedbackQuestionIndex] && (
+                    <FeedbackModal
+                        isOpen={feedbackOpen}
+                        onClose={() => {
+                            setFeedbackOpen(false);
+                            setFeedbackQuestionIndex(null);
+                        }}
+                        feedbackType="quiz_question"
+                        contentId={quiz.questions[feedbackQuestionIndex]._id}
+                        contentTitle={`${quiz.title} - Question ${feedbackQuestionIndex + 1}`}
+                        courseId={domain?._id}
+                        quizId={quiz._id}
                     />
                 )}
             </div>
@@ -616,7 +636,7 @@ function ResultsScreen({ quiz, result, startTime, domainId, nextItem, prevItem, 
     );
 }
 
-function ReviewScreen({ quiz, result, currentIndex, onIndexChange, onExit }) {
+function ReviewScreen({ quiz, result, currentIndex, onIndexChange, onExit, setFeedbackOpen, setFeedbackQuestionIndex }) {
     // result.results has array of { questionId, isCorrect, correctAnswer, userAnswer, explanation }
     // We need to map result.results to quiz.questions order
     const question = quiz.questions[currentIndex];
@@ -738,25 +758,37 @@ function ReviewScreen({ quiz, result, currentIndex, onIndexChange, onExit }) {
                 </div>
             </Card>
 
-            <div className="flex gap-4">
+            <div className="flex gap-3">
                 <Button
-                    variant="outline"
-                    onClick={() => onIndexChange(Math.max(0, currentIndex - 1))}
-                    disabled={currentIndex === 0}
-                    leftIcon={<ArrowLeft size={18} />}
-                    fullWidth
+                    variant="ghost"
+                    leftIcon={<Flag size={16} />}
+                    onClick={() => {
+                        setFeedbackQuestionIndex(currentIndex);
+                        setFeedbackOpen(true);
+                    }}
                 >
-                    Previous
+                    Report Issue
                 </Button>
-                <Button
-                    variant="outline"
-                    onClick={() => onIndexChange(Math.min(quiz.questions.length - 1, currentIndex + 1))}
-                    disabled={currentIndex === quiz.questions.length - 1}
-                    rightIcon={<ArrowRight size={18} />}
-                    fullWidth
-                >
-                    Next
-                </Button>
+                <div className="flex gap-2 flex-1">
+                    <Button
+                        variant="outline"
+                        onClick={() => onIndexChange(Math.max(0, currentIndex - 1))}
+                        disabled={currentIndex === 0}
+                        leftIcon={<ArrowLeft size={18} />}
+                        fullWidth
+                    >
+                        Previous
+                    </Button>
+                    <Button
+                        variant="outline"
+                        onClick={() => onIndexChange(Math.min(quiz.questions.length - 1, currentIndex + 1))}
+                        disabled={currentIndex === quiz.questions.length - 1}
+                        rightIcon={<ArrowRight size={18} />}
+                        fullWidth
+                    >
+                        Next
+                    </Button>
+                </div>
             </div>
         </div>
     );
